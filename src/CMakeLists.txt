@@ -11,7 +11,11 @@ file(GLOB SOURCE_LIST CONFIGURE_DEPENDS
         "${FinalProject_SOURCE_DIR}/src/*.h"
         "${FinalProject_SOURCE_DIR}/src/*.hpp"
         "${FinalProject_SOURCE_DIR}/src/*.cc"
-        "${FinalProject_SOURCE_DIR}/src/*.cpp")
+        "${FinalProject_SOURCE_DIR}/src/*.cpp"
+        "${FinalProject_SOURCE_DIR}/src/ciUI/*.h"
+        "${FinalProject_SOURCE_DIR}/src/ciUI/*.hpp"
+        "${FinalProject_SOURCE_DIR}/src/ciUI/*.cc"
+        "${FinalProject_SOURCE_DIR}/src/ciUI/*.cpp")
 
 
 ci_make_library(
