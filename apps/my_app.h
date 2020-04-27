@@ -18,9 +18,11 @@ class MyApp : public cinder::app::App {
   void keyDown(cinder::app::KeyEvent) override;
   void mouseDown(cinder::app::MouseEvent) override;
 
+  std::string filenames [4];
+
   reza::ui::SuperCanvasRef mUi;
-  reza::ui::Button::Format buttonOne = reza::ui::Button::Format();
-  ci::audio::VoiceRef mVoice;
+  std::vector<reza::ui::TextInputRef> inputs;
+  ci::audio::VoiceRef mVoice [4];
 };
 
 }  // namespace myapp

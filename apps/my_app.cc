@@ -18,34 +18,59 @@ MyApp::MyApp() {}
 
 void MyApp::setup() {
   mUi = SuperCanvas::create("beat looper");
+  mUi->addLabel("type filenames and hit enter to map to keys 1-4", FontSize::MEDIUM);
   mUi->addSpacer();
-  buttonOne.size(10000);
-  buttonOne.align(Alignment::RIGHT);
-  buttonOne.fontSize(static_cast<FontSize>(20));
-  buttonOne.label("1");
-  mUi->addButton("one", true, buttonOne);
+  mUi->addSpacer();
+
+  for (int i = 1; i < 5; i++) {
+    mUi->addLabel("key " + std::to_string(i) + " filename:", FontSize::MEDIUM);
+    inputs.push_back(mUi->addTextInput(" ", TextInput::Format()));
+    mUi->addSpacer();
+    mUi->addSpacer();
+  }
+
+  mUi->addLabel("use keys 1-4 to play", FontSize::MEDIUM);
   mUi->autoSizeToFitSubviews();
 
   ci::audio::SourceFileRef musicFile = ci::audio::load(ci::app::loadAsset("clap.wav"));
-  mVoice = ci::audio::Voice::create(musicFile);
+  mVoice[0] = ci::audio::Voice::create(musicFile);
 
 }
 
-void MyApp::update() {}
+void MyApp::update() {
+
+}
 
 void MyApp::draw() {}
 
 void MyApp::keyDown(KeyEvent event) {
+  if (event.getCode() == 13) {
+    for (int i = 0; i < 4; i++) {
+      filenames[i] = (*inputs[i]).getValue();
+      if (filenames[i].front() == ' ') {
+        filenames[i] = filenames[i].substr(1, filenames[i].size());
+      }
+      std::cout << filenames[i];
+      ci::audio::SourceFileRef musicFile = ci::audio::load(ci::app::loadAsset(filenames[i]));
+      mVoice[i] = ci::audio::Voice::create(musicFile);
+    }
+  }
   switch (event.getChar()) {
     case '1': {
-      mVoice->start();
-      buttonOne.setState( State::DOWN );
+      mVoice[0]->start();
+      break;
     }
     case '2': {
+      mVoice[1]->start();
+      break;
     }
     case '3': {
+      mVoice[2]->start();
+      break;
     }
     case '4': {
+      mVoice[3]->start();
+      break;
     }
     case '5': {
     }
