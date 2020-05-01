@@ -15,4 +15,8 @@
  - **4/26/20** TextInput
    - implemented text input for filenames in asset folder
    - mapped 4 sounds using filenames from text fields
-  
+   
+ - **4/30/20** BPM + Timestamping
+   - implemented slider for selecting a BPM
+   - saved key presses in vector for 2 4/4 measures
+ 

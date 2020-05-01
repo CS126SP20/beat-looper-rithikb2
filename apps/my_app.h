@@ -15,14 +15,30 @@ class MyApp : public cinder::app::App {
   void setup() override;
   void update() override;
   void draw() override;
+  void play(int key);
   void keyDown(cinder::app::KeyEvent) override;
   void mouseDown(cinder::app::MouseEvent) override;
 
   std::string filenames [4];
 
   reza::ui::SuperCanvasRef mUi;
+  reza::ui::Sliderf::Format sliderFormat = reza::ui::Sliderf::Format();
   std::vector<reza::ui::TextInputRef> inputs;
+  reza::ui::SliderfRef sliderRef;
+  int bpm;
+  ci::audio::VoiceRef metronome;
   ci::audio::VoiceRef mVoice [4];
+  bool isRecording = false;
+  std::chrono::system_clock::time_point start = std::chrono::system_clock::now();
+  struct event {
+    int key;
+    int timestamp;
+    event(int k, int t) {
+      key = k;
+      timestamp = t;
+    }
+  };
+  std::vector<event> events;
 };
 
 }  // namespace myapp
