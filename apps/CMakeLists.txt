@@ -1,12 +1,14 @@
 get_filename_component(CINDER_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../../" ABSOLUTE)
 include("${CINDER_PATH}/proj/cmake/modules/cinderMakeApp.cmake")
-include_directories("${CINDER_PATH}/my-projects/final-project-rithikb2/src/ciUI")
+include_directories("${CINDER_PATH}/my-projects/final-project-rithikb2/src/ciUI",
+                    "${CINDER_PATH}/my-projects/final-project-rithikb2/src/sqlite3")
 
 file(GLOB SOURCE_LIST CONFIGURE_DEPENDS
         "${FinalProject_SOURCE_DIR}/apps/*.h"
         "${FinalProject_SOURCE_DIR}/apps/*.hpp"
         "${FinalProject_SOURCE_DIR}/apps/*.cc"
-        "${FinalProject_SOURCE_DIR}/apps/*.cpp")
+        "${FinalProject_SOURCE_DIR}/apps/*.cpp"
+        "${FinalProject_SOURCE_DIR}/apps/*.c")
 
 
 ci_make_app(
