@@ -7,7 +7,7 @@
 #include <cinder/audio/Voice.h>
 #include <sqlite3.h>
 #include <cstdio>
-
+#include <algorithm>
 #include "UI.h"
 
 namespace myapp {
@@ -18,23 +18,39 @@ class MyApp : public cinder::app::App {
   void setup() override;
   void update() override;
   void draw() override;
+  void readInputs();
   void play(int key);
   void keyDown(cinder::app::KeyEvent) override;
   void mouseDown(cinder::app::MouseEvent) override;
   static int callback(void *NotUsed, int argc, char **argv, char **azColName);
+  void playLoop();
   std::string filenames [4];
-
+  std::string trackname;
   reza::ui::SuperCanvasRef mUi;
   reza::ui::Sliderf::Format sliderFormat = reza::ui::Sliderf::Format();
   std::vector<reza::ui::TextInputRef> inputs;
-  reza::ui::TextInputRef textInputRef;
-  reza::ui::SliderfRef sliderRef;
+  reza::ui::TextInputRef trackInputRef;
+  reza::ui::SliderfRef loopSlideRef;
+  reza::ui::SliderfRef bpmSlideRef;
   int bpm;
-  std::string trackName = "test";
+  int loopTotal = 5;
   ci::audio::VoiceRef metronome;
   ci::audio::VoiceRef mVoice [4];
+  ci::audio::VoiceRef sound;
+  int loopCount = 0;
+  struct loopVoice {
+    std::string filename;
+    ci::audio::VoiceRef sound;
+    loopVoice(std::string f, ci::audio::VoiceRef s){
+      filename = f;
+      sound = s;
+    }
+  };
+  std::vector<loopVoice> loopVoices;
   bool isRecording = false;
+  bool isLooping = false;
   std::chrono::system_clock::time_point start = std::chrono::system_clock::now();
+  //std::chrono::nanoseconds wait;
   struct event {
     int key;
     int timestamp;
@@ -47,12 +63,10 @@ class MyApp : public cinder::app::App {
       return (timestamp < e.timestamp);
     }
   };
-  //void insertEvents();
   std::vector<event> events;
   void saveEvents();
   void loadEvents();
   std::string tracksFolder = "/Users/school/Cinder/my-projects/final-project-rithikb2/assets/tracks/";
-  //sqlite3 *db_;
   struct fEvent {
     std::string filename;
     int timestamp;
