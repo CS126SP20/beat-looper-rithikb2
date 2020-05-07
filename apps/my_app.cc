@@ -2,12 +2,6 @@
 
 #include "my_app.h"
 
-#include <cinder/app/App.h>
-#include <cinder/audio/Voice.h>
-
-
-#include "UI.h"
-
 using namespace reza::ui;
 using namespace ci;
 using namespace ci::app;
@@ -39,11 +33,12 @@ void MyApp::setup() {
   bpmSlideRef = mUi->
       addSliderf("bpm", 60, 20.0, 260, sliderFormat);
   loopSlideRef = mUi->
-      addSliderf("loop count", 5, 1, 100, sliderFormat);
+      addSliderf("loop count", 3, 1, 100, sliderFormat);
   mUi->addSpacer();
   mUi->addSpacer();
   mUi->addLabel("press F1 to record your loop", FontSize::LARGE);
-  mUi->addLabel("press F2 to play your loop", FontSize::LARGE);
+  mUi->addLabel("press F2 to stop recording", FontSize::LARGE);
+  mUi->addLabel("press F3 to play your loop", FontSize::LARGE);
   mUi->autoSizeToFitSubviews();
 
   ci::audio::SourceFileRef musicFile =
@@ -60,18 +55,16 @@ void MyApp::play(int key) {
     mVoice[key - 1]->stop();
   }
   if (isRecording) {
-    if ((std::chrono::system_clock::now() - start).count() < (60000000 * 8 / bpm)) {
+    if ((std::chrono::system_clock::now() - start).count() < (kMinToMicro * kBeats / bpm)) {
       events.push_back(
           event(key, (std::chrono::system_clock::now() - start).count()));
-    } else {
-      isRecording = false;
-      saveEvents();
     }
   }
   mVoice[key - 1]->start();
 }
 
 void MyApp::loadEvents() {
+  fEvents.clear();
   std::ifstream readFile = std::ifstream(tracksFolder + trackname + ".txt");
   std::string token1;
   int token2;
@@ -94,6 +87,7 @@ void MyApp::saveEvents() {
   for (event e : events) {
     fEvents.push_back(fEvent(filenames[e.key - 1], e.timestamp));
   }
+  events.clear();
   std::ofstream trackFile = std::ofstream(tracksFolder + trackname + ".txt");
   trackFile << "BPM: " << bpm << "\n";
 
@@ -127,7 +121,7 @@ void MyApp::playLoop() {
       sound->start();
       loopVoices.push_back(loopVoice(e.filename, sound));
     }
-    std::chrono::nanoseconds endWait(((60000000 * 8 / bpm) - fEvents.back().timestamp) * 1000);
+    std::chrono::nanoseconds endWait((((kMinToMicro * kBeats / bpm) - (fEvents.back().timestamp)) * 1000));
     std::this_thread::sleep_for(endWait);
     loopCount++;
   }
@@ -140,7 +134,7 @@ void MyApp::readInputs() {
   if (trackname.front() == ' ') {
     trackname = trackname.substr(1, trackname.size());
   }
-  for (int i = 0; i < 4; i++) {
+  for (int i = 0; i < kKeys; i++) {
     filenames[i] = (*inputs[i]).getValue();
     if (filenames[i] == " " || filenames[i] == "") {
       filenames[i] = "metronome.wav";
@@ -162,15 +156,19 @@ void MyApp::keyDown(KeyEvent event) {
   }
   if (event.getCode() == 282) {
     readInputs();
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < kKeys; i++) {
       metronome->start();
-      std::this_thread::sleep_for(std::chrono::milliseconds((60000 / bpm)));
+      std::this_thread::sleep_for(std::chrono::milliseconds((kMinToMil / bpm)));
       metronome->stop();
     }
     start = std::chrono::system_clock::now();
     isRecording = true;
   }
   if (event.getCode() == 283) {
+    isRecording = false;
+    saveEvents();
+  }
+  if (event.getCode() == 284) {
     loopCount = 0;
     readInputs();
     isLooping = true;

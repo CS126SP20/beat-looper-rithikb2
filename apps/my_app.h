@@ -12,6 +12,11 @@
 
 namespace myapp {
 
+constexpr size_t kBeats = 8;
+constexpr size_t kKeys = 4;
+constexpr size_t kMinToMil = 60000;
+constexpr size_t kMinToMicro = 60000000;
+
 class MyApp : public cinder::app::App {
  public:
   MyApp();
@@ -24,6 +29,7 @@ class MyApp : public cinder::app::App {
   void mouseDown(cinder::app::MouseEvent) override;
   static int callback(void *NotUsed, int argc, char **argv, char **azColName);
   void playLoop();
+
   std::string filenames [4];
   std::string trackname;
   reza::ui::SuperCanvasRef mUi;
