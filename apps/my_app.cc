@@ -208,8 +208,6 @@ void MyApp::keyDown(KeyEvent event) {
   }
 }
 
-void MyApp::mouseDown(MouseEvent event) {
-
-}
+void MyApp::mouseDown(MouseEvent event) {}
 
 }// namespace myapp
